@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+ <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
+
+    <head>
+
+         <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+
+        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+
+    </head>
+
+    <style>
+    html, body {
+           height: 90%;
+           position: absolute;
+           top: 50%;
+           left: 50%;
+           margin-left: auto;
+           margin-right: auto;
+           transform: translate(-50%, -50%);
+           background-size: cover;
+           width: 100vw;
+           height: 100vh;
+           display:block;
+           align-items: center;
+           justify-items: center;
+           background-color:rgb(9, 69, 97);
+           color: aliceblue;
+          }
+
+
+    header{
+            text-align: center;
+            font-size: xx-large;
+           }
+
+
+    * {
+        box-sizing: border-box;
+      }
+
+    input[type=text], select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        resize: vertical;
+      }
+
+    label {
+        padding: 12px 12px 12px 0;
+        display: inline-block;
+    }
+
+    button[type=submit] {
+        background-color: rgb(9, 69, 97);
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        float: right;
+        width: 10%;
+    }
+
+
+
+  .container {
+      border-radius: 5px;
+      background-color: #f2f2f2;
+      padding: 20px;
+      color:rgb(9, 69, 97);
+      margin: 0 auto; width: 1000px;
+    }
+
+  .col-25 {
+      float: left;
+      width: 25%;
+      margin-top: 6px;
+    }
+
+  .col-75 {
+      float: left;
+      width: 75%;
+      margin-top: 6px;
+  }
+
+  .row:after {
+      content: "";
+      display: table;
+      clear: both;
+  }
+
+  .obj {
+  	    max-width: 100%;
+	    height: auto;
+	    display: block;
+  }
+
+  @media screen and (max-width: 600px) {
+    .col-25, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+  }
+    </style>
+
+     <body onload="initialize()">
+       <header>
+         <b> FAITES NOUS PART DE VOTRE RECLAMATION </b>
+       </header>
+
+       <br><br>
+         <label style="margin-left:25%">Situez votre reclamation en cliquant sur la carte : </label>
+         <div id="map" style="width:100%; height:30%; width: 1000px; width: 100%; margin: 0 auto; width: 1000px;"></div>
+
+         <br><br>
+
+         <div class="container">
+          <form action="http://mamairie.alwaysdata.net/mailer.php" name="envoi" method=POST enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-25">
+              <label for="fname"><b>Nom : </b></label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="nom" name="nom" placeholder="Votre nom.." required="required">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-25">
+              <label for="lname"><b>Prenom : </b></label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="prenom" name="prenom" placeholder="Votre prenom.. " required="required">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-25">
+              <label for="mail"><b>E-mail : </b></label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="mail" name="mail" placeholder="Votre e-mail.." required="required">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-25">
+              <label for="sujet"><b>Sujet : </b></label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="sujet" name="sujet" placeholder="Le sujet de votre reclamation.." required="required">
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-25">
+              <label for="upload"><b>Joindre une photo :</b> </label>
+            </div>
+            <div class="col-75">
+              <input type="file" id="img" name="img" accept="image/png, image/jpeg" onchange="handleFiles(files)" multiple="multiple">
+              <label for="upload"><span id="preview"></span></label>
+            </div>
+            </div>
+
+
+          <div class="row">
+            <div class="col-25">
+              <label for="reclamation"><b>Description :</b></label>
+            </div>
+            <div class="col-75">
+              <textarea id="desc" name="desc" placeholder="Decrivez votre reclamation.." required="required" style="height:200px"></textarea>
+            </div>
+            </div>
+
+
+        <div class="row">
+          <div class="col-25">
+            <label for="latitude"><b>Latitude :</b></label>
+          </div>
+          <div class="col-75">
+            <input type="text" id="lati" name="lati" style="height:30px; width: 25%;" readonly="readonly" value=" ">
+          </div>
+          </div>
+
+          <div class="row">
+            <div class="col-25">
+              <label for="longi"><b>Longitude :</b></label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="longi" name="longi" style="width: 25%; height:30px " readonly="readonly" value=" ">
+            </div>
+            </div>
+
+            <div class="row">
+              <div class="col-25">
+                <label for="anonymat"><b>Souhaitez-vous restez anonyme ?</b></label>
+              </div>
+              <div class="col-75">
+                <input type="checkbox" id="ano" name="ano">
+              </div>
+              </div>
+              <div class="row">
+                <button type="submit" onclick="window.location='https://mamairie1.wordpress.com/';">Retour</button>
+             </div>
+             <br>
+           <div class="row"  id="divBouton">
+             <button type="submit">Soumettre</button>
+          </div>
+          <br>
+
+
+         </form>
+      </div>
+     </body>
+ </html>
+ <script type="text/javascript">
+  function initialize() {
+      var map = L.map('map').setView([50.60907, 3.13809], 16);
+
+      var markers = new Array();
+
+      var osmLayer = L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', { // LIGNE 20
+          attribution: '© OpenStreetMap contributors',
+          maxZoom: 19
+      }).addTo(map);
+
+      map.on('click', addMarker);
+
+      function addMarker(e){
+        var newMarker = new L.marker(e.latlng);
+        if (markers.length > 0 ){
+          map.removeLayer(markers[0]);
+          markers.pop();
+        }
+        markers.push(newMarker);
+        map.addLayer(markers[0]);
+        document.getElementById("longi").setAttribute("value",markers[0].getLatLng().lng);
+        document.getElementById("lati").setAttribute("value",markers[0].getLatLng().lat);
+      }
+  }
+</script>
+<script type="text/javascript">
+  function handleFiles(files) {
+    var imageType = /^image\//;
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      if (!imageType.test(file.type)) {
+        alert("veuillez sélectionner une image");
+      }else{
+        if(i == 0){
+          preview.innerHTML = '';
+        }
+      var img = document.createElement("img");
+      img.classList.add("obj");
+      img.file = file;
+      preview.appendChild(img);
+      var reader = new FileReader();
+      reader.onload = ( function(aImg) {
+        return function(e) {
+          aImg.src = e.target.result;
+        };
+      })(img);
+
+      reader.readAsDataURL(file);
+    }
+
+  }
+}
+</script>
